@@ -1,0 +1,53 @@
+---
+title: "Experimental Results"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(DT)
+library(plotly)
+data<-read.csv('simulated_data.csv')
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+graph<-ggplot(data,aes(x=Time, y=Response, col=Treatment))+
+  geom_point()+
+  theme_classic()+
+  xlab('Time (min)') 
+
+
+graph %>% ggplotly()
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### At Time 0
+
+```{r}
+data %>% 
+  filter(Time==0) %>% 
+  group_by(Treatment, Age_Category) %>% 
+  summarize(mean=mean(Response)) %>% 
+    datatable()
+```
+
+### At Time 120
+
+```{r}
+data %>% 
+  filter(Time==120) %>% 
+  group_by(Treatment, Age_Category) %>% 
+  summarize(mean=mean(Response)) %>% 
+    datatable()
+```

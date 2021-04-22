@@ -1,0 +1,53 @@
+---
+title: "05-Wrap-Up-Exercises"
+output: html_document
+---
+
+1. Set your working directory to the folder that holds the `Untidy_Data.csv`. Then import `Untidy_Data.csv` and copy the code below, name it `Untidy_Data`
+```{r}
+
+```
+
+2. Take a look at the dataset, you'll need to use one of the pivot functions to tidy it.  Does it need to be longer or wider? Pick one and see if it works, when you have the data tidied assign it the name `data` (Hint: create columns Time_min and Response)
+```{r}
+
+```
+
+3. Filter for data collected for those in the young age category and call this `data_subset`
+```{r}
+data_subset <- #add your code here
+```
+
+4. Let's create a summary of the data, replace the ??? with the appropriate text to calculate the average and standard deviation of the Response measurement for each Treatment at each Time  across all patients.
+```{r}
+data_subset %>% 
+  group_by(???) %>% 
+  summarize(mean = mean(???),
+            sd = sd(???))
+```
+
+5. Let's say we want to know the change in Response in one patient from 0 to 60 min. Using our `data`, replace the ??? in the code below to create a dataset where we calculate this change
+
+```{r}
+change<- data %>% 
+       ???(names_from=TIME_min, values_from=Response) %>% 
+       ???(change_60min = `60` - `0`) 
+
+change
+  
+```
+
+6. From the `change` dataset summarize the mean `change_60min` grouped by treatment. 
+```{r}
+gluc %>% 
+  group_by(???) %>% 
+  summarize(response_change = ???)
+```
+7. Create a boxplot with the `change_60min` on the y axis and `Treatment` on the x axis. 
+```{r}
+
+```
+8. Add the code to the graph above that will create two facets so the participants in different age categories are in separate plots. Make any additional changes (e.g. add labels, a title, theme) and save the graph!
+
+
+

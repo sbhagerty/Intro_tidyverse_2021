@@ -1,0 +1,160 @@
+---
+title: "Transform Data"
+---
+
+
+# Import Data
+
+## Your Turn 1
+
+Set the working directory to `03-Transform`. Then import the `pbc.csv` data set, which is in the `03-Transform` folder, as `pbc`. Then copy the import code into the code chunk below. Does it run?
+
+```{r}
+library(tidyverse)
+pbc <- read_csv("pbc.csv")
+```
+
+```{r}
+pbc
+```
+
+
+# Transforming Data with `dplyr`
+
+#### Part 1, `select()`, `filter()`, `arrange()`
+
+**SELECT**
+Select the id column from pbc
+```{r}
+select(pbc, id)
+```
+The above code is the same as
+```{r}
+pbc %>% 
+  select(id)
+```
+
+You can use helpers with select, for example to select everything but the id and age
+```{r}
+pbc %>% 
+  select(-c(id,age))
+```
+You can select every column that mentions time with:
+```{r}
+pbc %>% 
+  select(contains('time'))
+```
+
+Use the data-transformation-cheatsheet to find the helper that would let you select every column that starts with p
+```{r}
+pbc %>% 
+  select(starts_with('p'))
+```
+
+
+**FILTER**
+You can filter for patients who received the placebo
+```{r}
+pbc %>% 
+  filter(trt == 'placebo')
+```
+You can filter for patients between age 30 and 60
+```{r}
+pbc %>% 
+  filter(age>30, age<60)
+```
+
+We can exclude patients that got a transplant:
+```{r}
+pbc_filtered<-pbc %>% 
+  filter(status !=1) 
+pbc_filtered
+```
+Women between age 30 and 60 are at high risk of pbc, can you filter the data to create a high_risk subset?
+```{r}
+high_risk <- pbc %>% filter(
+  age>30, age<60, sex == 'f'
+) 
+```
+
+Could you add `arrange` to the above code so the data are sorted by `alk.phos` value.
+
+#### Part 2: `mutate()`, `group_by()`, `summarize()`
+
+```{r}
+bmi <- tibble(
+  plan = c('a','a','b','b','a'),
+  weight_kg=c(96,87,104,61,131), 
+  height_cm=c(174,189,195,149,131))
+
+bmi <- bmi %>% mutate(bmi = weight_kg / ((height_cm)^2*.0001))
+
+```
+
+
+```{r}
+bmi %>% group_by(plan) %>% mutate(group_avg_height= mean(height_cm))
+```
+
+```{r}
+bmi %>% group_by(plan) %>% summarize(mean_bmi = mean(bmi), count= n())
+```
+*Practice*
+
+Take the `pbc` data set and group by stage, then summarize to get the average `alk.phos` value, number of observations, and 
+```{r}
+
+```
+You might see mean_alk.phos is filled with NA values, that's because we had some missing values in our `pbc` dataset.  By default the `mean()` returns NA if the dataset has any missing values. We can override this by setting the argument `na.rm = TRUE` this tells the mean funciton to ignore missing values can compute mean based on whatever is present. 
+
+Change the code below so that we have a summary table of the number of patients in each stage for each sex. What variables are we grouping by and which are we summarizing? 
+
+```{r}
+pbc %>% 
+  group_by(stage, sex) %>% 
+  summarize(
+    patient_count = n()
+  )
+```
+
+Open the data-transformations-cheatsheet, look at the summary functions. Try adding another summary function to the summary dataframe you created above. 
+
+### A few other handy dplyr tricks
+
+Case when lets you conditionally apply something, Here we conditionally assign the new spiders column present or absent based on coding in the original spiders column
+```{r}
+pbc <- pbc %>% mutate(
+  spiders = case_when(
+    spiders == 1 ~ "present",
+    spiders == 0 ~ "absent"
+  )
+)
+```
+
+Count the number of observations, even the number of observations by groups 
+
+```{r}
+pbc %>% 
+  count(sex)
+```
+
+```{r}
+pbc %>% 
+  count(sex,trt,stage)
+```
+
+***
+
+# Take aways
+
+* Extract variables with `select()`  
+* Extract cases with `filter()`  
+* Arrange cases, with `arrange()`  
+
+* Make tables of summaries with `summarise()`  
+* Make new variables, with `mutate()`  
+* Do groupwise operations with `group_by()`
+
+* Connect operations with `%>%`  
+
+
